@@ -28,6 +28,8 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
+        from simple_cache import SimpleCache as cache
+
         currpos = {'x': 680, 'y': 380} if device.get_current_position() is None \
             else device.get_current_position()
 
