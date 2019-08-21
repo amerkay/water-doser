@@ -14,17 +14,23 @@ class SimpleCache():
     # Looks like: {"id": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
     cache_store = {}
 
-    try:
-        # if cache file not modified in 48 hours or empty, don't load it
-        if time.time() - os.path.getmtime(CACHE_FILE) < 48 * 60 * 60 and os.path.getsize(CACHE_FILE) > 0:
-            with open(CACHE_FILE, 'rb') as handle:
-                cache_store = pickle.load(handle)
-                log("Loaded {} cached items from disk".format(len(cache_store)), title="SimpleCache")
-        else:
-            log("Nothing to load from disk", title="SimpleCache")
-    except Exception as e:
-        log("Exception thrown: {}, traceback: {}".format(e, format_exc()), message_type='error', title="main")
-        raise Exception(e)
+    @staticmethod
+    def init():
+        log("In init()", "success", title="SimpleCache")
+        try:
+            # if cache file not modified in 48 hours or empty, don't load it
+            if time.time() - os.path.getmtime(SimpleCache.CACHE_FILE) < 48 * 60 * 60 \
+                    and os.path.getsize(SimpleCache.CACHE_FILE) > 0:
+                with open(SimpleCache.CACHE_FILE, 'rb') as handle:
+                    cache_store = pickle.load(handle)
+                    log("Loaded {} cached items from disk".format(len(cache_store)), title="SimpleCache")
+            else:
+                log("Nothing to load from disk", title="SimpleCache")
+        except Exception as e:
+            log("Exception thrown: {}, traceback: {}".format(e, format_exc()),
+                message_type='error',
+                title="main")
+            raise Exception(e)
 
     @staticmethod
     def save(cache_id, content, lifetime_s=24 * 60 * 60):
