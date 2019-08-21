@@ -21,7 +21,10 @@ class PointSort():
         """ Sort the points """
         if (use_tsp_solver is True) and len(points) > 0:
             # Get current location
-            currpos = {'x': 0, 'y': 0} if device.get_current_position() is None else device.get_current_position()
+            currpos = {
+                'x': 0,
+                'y': 0
+            } if device.get_current_position() is None else device.get_current_position()
             log("current position is {}".format(currpos), title="sort_points")
             return PointSort.sort_points_by_dist(points, currpos)
         else:

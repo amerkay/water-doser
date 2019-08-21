@@ -21,7 +21,7 @@ from simple_cache import SimpleCache as cache
 from datetime import datetime as dt
 from farmware_tools import app
 from input_store import InputStore
-from fake_plants import FakePlants
+# from fake_plants import FakePlants
 
 # import static logger and create shortcut function
 from logger import Logger
