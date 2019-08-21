@@ -3,7 +3,6 @@ import sys
 from traceback import format_exc
 
 from farmware_tools import device
-from water_dose import WaterDose
 from point_sort import PointSort
 from input_store import InputStore
 
@@ -32,6 +31,7 @@ if __name__ == "__main__":
         currpos = {'x': 680, 'y': 380} if device.get_current_position() is None \
             else device.get_current_position()
 
+        from water_dose import WaterDose
         from plants import Plants
         from control import Control
 
