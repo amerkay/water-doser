@@ -2,11 +2,11 @@ import os
 import sys
 from traceback import format_exc
 
-# from farmware_tools import device
+from farmware_tools import device
 # from water_dose import WaterDose
-# from point_sort import PointSort
+from point_sort import PointSort
 from input_store import InputStore
-# from plants import Plants
+from plants import Plants
 # from control import Control
 
 # import static logger and create shortcut function
