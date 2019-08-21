@@ -1,0 +1,8 @@
+[flake8]
+ignore = E121,E123,,E126,E226,E24,E704,W503,W504,
+    # visually indented line with same indent as next logical line,
+    E129,
+    # bare except
+    E722
+
+max-line-length=110
