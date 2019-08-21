@@ -6,8 +6,6 @@ from farmware_tools import device
 from water_dose import WaterDose
 from point_sort import PointSort
 from input_store import InputStore
-from plants import Plants
-from control import Control
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -23,7 +21,6 @@ if __name__ == "__main__":
 
     Logger.FARMWARE_NAME = FARMWARE_NAME
 
-    # First try block logs under "init" for debugging reasons
     try:
         # create new instance of the InputStore. this will load the user input or defaults
         input_store = InputStore(FARMWARE_NAME)
@@ -34,6 +31,9 @@ if __name__ == "__main__":
 
         currpos = {'x': 680, 'y': 380} if device.get_current_position() is None \
             else device.get_current_position()
+
+        from plants import Plants
+        from control import Control
 
         # init instances
         water_dose = WaterDose(FARMWARE_NAME, input_store.input)
