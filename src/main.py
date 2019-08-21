@@ -13,8 +13,6 @@ from control import Control
 from logger import Logger
 log = Logger.log
 
-device.log("WE ARE HERE", "success")
-
 if __name__ == "__main__":
     # get farmware name from path
     FARMWARE_NAME = "smart-water-doser-dev"
