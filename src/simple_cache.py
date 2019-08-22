@@ -8,9 +8,25 @@ from logger import Logger
 log = Logger.log
 
 
+def _get_dir():
+    DIR = os.path.dirname(os.path.realpath(__file__)) + os.sep
+
+    try:
+        log("==> DIR {}".format(DIR), "success", title="SimpleCache _get_dir")
+        testfilename = DIR + 'test_write.try_to_write'
+        testfile = open(testfilename, "w")
+        testfile.close()
+        os.remove(testfilename)
+    except IOError:
+        log("==> DIR /tmp/", "info", title="SimpleCache _get_dir")
+        return '/tmp/'
+
+    return DIR
+
+
 class SimpleCache():
     CACHE_FILE = "simple_cache.pickle"
-    log("path {} --- {} -- {}".format(os.curdir, os.getcwd(), os.defpath), "success", title="SimpleCache")
+    PATH = _get_dir() + CACHE_FILE
 
     # Looks like: {"id": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
     cache_store = {}
@@ -18,11 +34,12 @@ class SimpleCache():
     @staticmethod
     def init():
         log("In init()", "success", title="SimpleCache")
+
         try:
             # if cache file not modified in 48 hours or empty, don't load it
-            if time.time() - os.path.getmtime(SimpleCache.CACHE_FILE) < 48 * 60 * 60 \
-                    and os.path.getsize(SimpleCache.CACHE_FILE) > 0:
-                with open(SimpleCache.CACHE_FILE, 'rb') as handle:
+            if time.time() - os.path.getmtime(SimpleCache.PATH) < 48 * 60 * 60 \
+                    and os.path.getsize(SimpleCache.PATH) > 0:
+                with open(SimpleCache.PATH, 'rb') as handle:
                     cache_store = pickle.load(handle)
                     log("Loaded {} cached items from disk".format(len(cache_store)), title="SimpleCache")
             else:
@@ -31,7 +48,7 @@ class SimpleCache():
             log("Exception thrown: {}, traceback: {}".format(e, format_exc()),
                 message_type='error',
                 title="main")
-            raise Exception(e)
+            # raise Exception(e)
 
     @staticmethod
     def save(cache_id, content, lifetime_s=24 * 60 * 60):
@@ -44,7 +61,7 @@ class SimpleCache():
             SimpleCache.cache_store[cache_id]["saved_at"] = time.time()
 
             # save to disk
-            with open(SimpleCache.CACHE_FILE, 'wb') as handle:
+            with open(SimpleCache.PATH, 'wb') as handle:
                 pickle.dump(SimpleCache.cache_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 log("Saved cache to disk, len {}".format(len(SimpleCache.cache_store)), title="SimpleCache")
 
@@ -63,5 +80,8 @@ class SimpleCache():
         # if we reach here, no match, return False
         return False
 
+    @staticmethod
     def _chk_id(cache_id):
         return str(cache_id)
+
+
