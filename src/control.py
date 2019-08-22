@@ -38,19 +38,26 @@ class Control():
         return self.get_peripheral_cached("water")["pin"]
 
     def get_peripheral_cached(self, peripheral_name):
-        cache_id = "peripheral-{}".format(peripheral_name)
+        cache_id = "peripherals"
         lifetime = 60 * 60
 
         if cache.is_cached(cache_id):
             log("hit; using cached result: {}".format(cache.get(cache_id)), title='get_peripheral_cached')
             return cache.get(cache_id)
         else:
-            res = app.post('peripherals', payload={'label': peripheral_name})
+            res = app.get('peripherals')
             log("miss; loading from API: {}".format(res), title='get_peripheral_cached')
 
             # if not the expected response, replace with stub for debugging locally
-            if type(res) is dict and len(res) > 0:
+            if type(res) is list and len(res) > 0:
                 cache.save(cache_id, res, lifetime)
-                return res
             else:
-                return {"pin": 999}
+                res = [{"pin": 999, "label": "water"}] # for debugging
+
+        # find peripheral in results
+        try:
+            out = next(item for item in res if item["label"].lower() == peripheral_name.lower())
+        except:
+            raise Exception("Cannot find peripheral_name {} in results {}".format(peripheral_name, res))
+
+        return out
