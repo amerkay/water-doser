@@ -30,7 +30,7 @@
     },
     {
         "name": "to_ml_multiplier",
-        "label": "Mutiplier to convert plant size to ml needed for watering. Default 3.",
+        "label": "Mutiplier to convert plant size to ml needed for watering. Default 3. Lower means less water.",
         "help": ["2-4 is a good range, depending on your plants. "],
         "value": "3"
     },

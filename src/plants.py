@@ -59,8 +59,8 @@ class Plants():
         self.farmwarename = farmwarename
         self.config = InputStore.merge_config(self.config, config)
 
-    def load_points_with_filters(self):
-        points = self._get_points_cached()
+    def load_points_with_filters(self, use_cache=False):
+        points = self._get_points_cached() if use_cache is True else self._get_points()
 
         log("all points loaded, count {}".format(len(points)), title='load_points_with_filters')
 
