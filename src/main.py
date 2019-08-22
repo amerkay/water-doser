@@ -15,7 +15,7 @@ log = Logger.log
 
 if __name__ == "__main__":
     # get farmware name from path
-    FARMWARE_NAME = "smart-water-doser-dev"
+    FARMWARE_NAME = "water-doser-dev"
     try:
         FARMWARE_NAME = ((__file__.split(os.sep))[len(__file__.split(os.sep)) - 3]).replace('-master', '')
     except:
