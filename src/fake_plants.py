@@ -1,8 +1,15 @@
+# import static logger and create shortcut function
+from logger import Logger
+log = Logger.log
+
+
 class FakePlants():
     """ FakePlants JSON for use in local testing/debugging. """
 
     @staticmethod
     def get_fake_plants():
+        log("Loading FAKE PLANTS.", "success", title="FakePlants::get_fake_plants")
+
         return [{
             'id': 157884,
             'created_at': '2019-07-29T10:41:01.765Z',

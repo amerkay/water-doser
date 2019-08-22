@@ -60,9 +60,11 @@ if __name__ == "__main__":
             plant_closest = points_sorted[0]
             log("closest_point is {}".format(plant_closest), title="main")
 
-        # use spread and age from MLH to decide Xms to water.
-        dose_ms = water_dose.calc_watering_params(plant_closest)
-        control.execute_watering(dose_ms)
+            # use spread and age from MLH to decide Xms to water.
+            dose_ms = water_dose.calc_watering_params(plant_closest)
+            control.execute_watering(dose_ms)
+        else:
+            log("No close points, moving on.", "info", title="main")
 
     except Exception as e:
         log("Exception thrown: {}, traceback: {}".format(e, format_exc()), message_type='error', title="main")
