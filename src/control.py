@@ -42,17 +42,13 @@ class Control():
         lifetime = 60 * 60
 
         if cache.is_cached(cache_id):
-            log("hit; using cache with {} plants".format(len(cache.get(cache_id))),
-                title='get_peripheral_cached')
+            log("hit; using cached result: {}".format(cache.get(cache_id)), title='get_peripheral_cached')
             return cache.get(cache_id)
         else:
             res = app.post('peripherals', payload={'label': peripheral_name})
             log("miss; loading from API: {}".format(res), title='get_peripheral_cached')
 
-            if type(res) is list and len(res) > 0:
-                cache.save(cache_id, res, lifetime)
-            else:
-                # for debugging purposes
-                return {"pin": 8}
-
+            # if not the expected response, replace with stub for debugging locally
+            res = res if type(res) is dict and len(res) > 0 else {"pin": 8}
+            cache.save(cache_id, res, lifetime)
             return res

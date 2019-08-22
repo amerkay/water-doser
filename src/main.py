@@ -5,6 +5,9 @@ from traceback import format_exc
 from farmware_tools import device
 from point_sort import PointSort
 from input_store import InputStore
+from water_dose import WaterDose
+from plants import Plants
+from control import Control
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -28,15 +31,8 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
-        from simple_cache import SimpleCache as cache
-        cache.init()
-
         currpos = {'x': 680, 'y': 380} if device.get_current_position() is None \
             else device.get_current_position()
-
-        from water_dose import WaterDose
-        from plants import Plants
-        from control import Control
 
         # init instances
         water_dose = WaterDose(FARMWARE_NAME, input_store.input)

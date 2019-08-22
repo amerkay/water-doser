@@ -12,13 +12,10 @@ def _get_dir():
     DIR = os.path.dirname(os.path.realpath(__file__)) + os.sep
 
     try:
-        log("==> DIR {}".format(DIR), "success", title="SimpleCache _get_dir")
         testfilename = DIR + 'test_write.try_to_write'
-        testfile = open(testfilename, "w")
-        testfile.close()
+        open(testfilename, "w").close()
         os.remove(testfilename)
     except IOError:
-        log("==> DIR /tmp/", "info", title="SimpleCache _get_dir")
         return '/tmp/'
 
     return DIR
@@ -27,6 +24,8 @@ def _get_dir():
 class SimpleCache():
     CACHE_FILE = "simple_cache.pickle"
     PATH = _get_dir() + CACHE_FILE
+
+    log("Using PATH: {}".format(PATH), title="SimpleCache")
 
     # Looks like: {"id": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
     cache_store = {}
@@ -40,8 +39,9 @@ class SimpleCache():
             if time.time() - os.path.getmtime(SimpleCache.PATH) < 48 * 60 * 60 \
                     and os.path.getsize(SimpleCache.PATH) > 0:
                 with open(SimpleCache.PATH, 'rb') as handle:
-                    cache_store = pickle.load(handle)
-                    log("Loaded {} cached items from disk".format(len(cache_store)), title="SimpleCache")
+                    SimpleCache.cache_store = pickle.load(handle)
+                    log("Loaded {} cached items from disk".format(len(SimpleCache.cache_store)),
+                        title="SimpleCache")
             else:
                 log("Nothing to load from disk", title="SimpleCache")
         except Exception as e:
@@ -85,3 +85,5 @@ class SimpleCache():
         return str(cache_id)
 
 
+# run init()
+SimpleCache.init()
