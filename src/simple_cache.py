@@ -9,7 +9,7 @@ log = Logger.log
 
 
 class SimpleCache():
-    CACHE_FILE = "./simple_cache.pickle"
+    CACHE_FILE = "./src/simple_cache.pickle"
     log("path {} --- {} -- {}".format(os.curdir, os.getcwd(), os.defpath), "success", title="SimpleCache")
 
     # Looks like: {"id": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
