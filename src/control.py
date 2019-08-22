@@ -43,7 +43,7 @@ class Control():
 
         if cache.is_cached(cache_id):
             log("hit; using cached result: {}".format(cache.get(cache_id)), title='get_peripheral_cached')
-            return cache.get(cache_id)
+            res = cache.get(cache_id)
         else:
             res = app.get('peripherals')
             log("miss; loading from API: {}".format(res), title='get_peripheral_cached')
@@ -51,8 +51,8 @@ class Control():
             # if not the expected response, replace with stub for debugging locally
             if type(res) is list and len(res) > 0:
                 cache.save(cache_id, res, lifetime)
-            else:
-                res = [{"pin": 999, "label": "water"}] # for debugging
+            else: # for debugging
+                res = [{"pin": 999, "label": "water"}]
 
         # find peripheral in results
         try:
