@@ -13,10 +13,11 @@ class WaterDose():
     config = {
         # my pump produces 100ml/sec
         'water_ml_per_sec': 100,
-        # Assumption: 8 weeks (15 originally), plant becomes an adult (i.e. takes the full height and spread)
-        'plant_adult_age': 7 * 8,
+        # Assumption: 15 weeks, plant becomes an adult (i.e. takes the full height and spread)
+        # TODO: Better source per plant
+        'plant_adult_age_weeks': 15,
         # Magic mutiplier to convert plant size to ml needed for watering
-        'to_ml_multiplier': 3
+        'to_ml_multiplier': 2
     }
 
     def __init__(self, farmwarename, config):
@@ -88,7 +89,7 @@ class WaterDose():
     def _get_supposed_watering(self, max_spread, age):
         min_d = 2
 
-        step = max_spread / float(self.config["plant_adult_age"])
+        step = max_spread / float(self.config["plant_adult_age_weeks"] * 7)
         d = step * age
 
         if d < min_d:

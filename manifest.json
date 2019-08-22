@@ -3,7 +3,7 @@
     "language": "python",
     "author": "amerkay",
     "description": "Smart Water Doser for Farmbot: Checks the weather and calculates how much water to dose each plant. The code is as annotated as could be, so have a look at https://github.com/amerkay/smart-water-doser/",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "min_os_version_major": 6,
     "url": "https://raw.githubusercontent.com/amerkay/smart-water-doser/master/manifest.json",
     "zip": "https://github.com/amerkay/smart-water-doser/archive/master.zip",
@@ -18,9 +18,21 @@
     },
     {
         "name": "water_ml_per_sec",
-        "label": "Filter by plant name, case insensitive. 'aru' matches 'Arugula', * for all.",
-        "help": ["Uses string contains. "],
+        "label": "Water ml per second. Default 100ml/s output.",
+        "help": ["Test yours by turning on the water for 1s using a ON-wait 1000ms-OFF sequence into a measuring cup"],
         "value": "100"
+    },
+    {
+        "name": "plant_adult_age_weeks",
+        "label": "Assumption: at 15 weeks a plant becomes an adult (i.e. takes the full height and spread)",
+        "help": ["TODO, better per plant information source"],
+        "value": "15"
+    },
+    {
+        "name": "to_ml_multiplier",
+        "label": "Mutiplier to convert plant size to ml needed for watering. Default 3.",
+        "help": ["2-4 is a good range, depending on your plants. "],
+        "value": "3"
     },
     {
         "name": "weather_lat",

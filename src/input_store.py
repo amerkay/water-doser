@@ -23,7 +23,9 @@ class InputStore():
 
     INPUT_DEFAULTS = {
         'plant_search_radius': (40, 'int'),
-        'water_ml_per_sec': (110, 'int'),
+        'water_ml_per_sec': (100, 'int'),
+        'plant_adult_age_weeks': (15, 'int'),
+        'to_ml_multiplier': (3, 'int'),
         'weather_lat': (47.25, 'float'),
         'weather_lon': (-122.45, 'float'),
         'debug': (2, 'int')

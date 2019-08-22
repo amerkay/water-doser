@@ -49,6 +49,6 @@ class Control():
             log("miss; loading from API: {}".format(res), title='get_peripheral_cached')
 
             # if not the expected response, replace with stub for debugging locally
-            res = res if type(res) is dict and len(res) > 0 else {"pin": 8}
+            res = res if type(res) is dict and len(res) > 0 else {"pin": 999}
             cache.save(cache_id, res, lifetime)
             return res
