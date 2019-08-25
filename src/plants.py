@@ -293,11 +293,16 @@ class Plants():
                 log('Nothing to save: {}'.format(save_point), title='save_plant')
                 return
 
-            log('Saving Point: {}'.format(save_point), title='save_plant')
-
             if Logger.LOGGER_LEVEL < 3:
+                plant_data_from_api = app.get('points/{}'.format(save_point['id']))
+                save_point['meta'] = {**save_point['meta'], **plant_data_from_api['meta']}
+
+                log('Saving Point after getting API meta: {}'.format(save_point), title='save_plant')
+
                 endpoint = 'points/{}'.format(save_point['id'])
                 app.put(endpoint, payload=save_point)
+            else:
+                log('FAKE Saving Point (debug level = 3): {}'.format(save_point), title='save_plant')
 
         except Exception as e:
             log('Exception thrown: {}'.format(e), 'error', title='save_plant')
