@@ -13,9 +13,23 @@ from control import Control
 from logger import Logger
 log = Logger.log
 
+# Farmware name, must be same as "package" attrib in manifest.json
+FARMWARE_NAME = "water-doser-dev"
+
+# The defaults, see InputStore class for more information.
+
+INPUT_DEFAULTS = {
+    'plant_search_radius': (40, 'int'),
+    'water_ml_per_sec': (100, 'int'),
+    'plant_adult_age_weeks': (15, 'int'),
+    'to_ml_multiplier': (3, 'int'),
+    'weather_lat': (47.25, 'float'),
+    'weather_lon': (-122.45, 'float'),
+    'debug': (2, 'int')
+}
+
 if __name__ == "__main__":
     # get farmware name from path
-    FARMWARE_NAME = "water-doser-dev"
     try:
         FARMWARE_NAME = ((__file__.split(os.sep))[len(__file__.split(os.sep)) - 3]).replace('-master', '')
     except:
@@ -25,7 +39,7 @@ if __name__ == "__main__":
 
     try:
         # create new instance of the InputStore. this will load the user input or defaults
-        input_store = InputStore(FARMWARE_NAME)
+        input_store = InputStore(FARMWARE_NAME, defaults=INPUT_DEFAULTS)
         # set logger level
         Logger.set_level(input_store.input['debug'])
 
