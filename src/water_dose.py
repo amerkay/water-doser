@@ -72,7 +72,7 @@ class WaterDose():
 
         # how much to water in ml, minimum value for ms is 250ms
         ml = int(round(supposed_watering)) if supposed_watering > 0 else 0
-        ms = min(int(ml / self.config["water_ml_per_sec"] * 1000), 250)
+        ms = max(int(ml / self.config["water_ml_per_sec"] * 1000), 250)
 
         log("Water {} {}ml; for {}ms".format(plant['openfarm_slug'], ml, ms),
             title="calc_watering_params")

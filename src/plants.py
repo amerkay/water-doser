@@ -32,10 +32,10 @@ class Plants():
     # defaults
     # See https://github.com/amerkay/powerloop/blob/master/manifest.json for more info.
     config = {
-        'pointname': '*',
-        'openfarm_slug': '*',
-        'age_min_day': -1,
-        'age_max_day': 36500,
+        'filter_pointname': '*',
+        'filter_openfarm_slug': '*',
+        'filter_age_min_day': -1,
+        'filter_age_max_day': 36500,
         'filter_meta_key': None,
         'filter_meta_op': None,
         'filter_meta_value': None,
@@ -65,10 +65,10 @@ class Plants():
         log("all points loaded, count {}".format(len(points)), title='load_points_with_filters')
 
         points_out = self.apply_filters(points=points,
-                                        point_name=self.config['pointname'],
-                                        openfarm_slug=self.config['openfarm_slug'],
-                                        age_min_day=self.config['age_min_day'],
-                                        age_max_day=self.config['age_max_day'],
+                                        point_name=self.config['filter_pointname'],
+                                        filter_openfarm_slug=self.config['filter_openfarm_slug'],
+                                        filter_age_min_day=self.config['filter_age_min_day'],
+                                        filter_age_max_day=self.config['filter_age_max_day'],
                                         meta_key=self.config['filter_meta_key'],
                                         meta_value=self.config['filter_meta_value'],
                                         min_x=self.config['filter_min_x'],
@@ -108,9 +108,9 @@ class Plants():
     def apply_filters(self,
                       points,
                       point_name='',
-                      openfarm_slug='',
-                      age_min_day=0,
-                      age_max_day=36500,
+                      filter_openfarm_slug='',
+                      filter_age_min_day=0,
+                      filter_age_max_day=36500,
                       meta_key=None,
                       meta_value=None,
                       min_x=None,
@@ -137,8 +137,8 @@ class Plants():
                 b_plantstage = self._filter_plant_stage(p['plant_stage'], plant_stages)
 
                 if (p['name'].lower().find(point_name.lower()) >= 0 or point_name == '*') \
-                    and (p['openfarm_slug'].lower().find(openfarm_slug.lower()) >= 0 or openfarm_slug == '*')\
-                    and (age_min_day <= age_day <= age_max_day) and b_meta is True \
+                    and (p['openfarm_slug'].lower().find(filter_openfarm_slug.lower()) >= 0 or filter_openfarm_slug == '*')\
+                    and (filter_age_min_day <= age_day <= filter_age_max_day) and b_meta is True \
                         and b_coordinate_x and b_coordinate_y and b_plantstage:
                     filtered_points.append(p.copy())
 
@@ -190,12 +190,14 @@ class Plants():
             bool -- True if match or None, False if not a match
         """
         if None not in (p, meta_key, meta_value):
-            try:
+            if 'meta' in p and meta_key in p['meta'] and p['meta'][meta_key] is not None:
                 target_age_in_seconds = \
                     (dt.utcnow() - dt.strptime(p['meta'][meta_key], '%Y-%m-%d %H:%M:%S.%f')).total_seconds()
+            else:
+                return False
 
+            try:
                 # log('==> p is None {}, key {}, value {}'.format(p is None, meta_key, meta_value), title='_filter_meta')
-
                 if self.config['filter_meta_op'] is None or self.config['filter_meta_op'] == "==":
                     return ((p['meta'][meta_key]).lower() == meta_value.lower())
                 elif self.config['filter_meta_op'] == ">=":
@@ -221,7 +223,7 @@ class Plants():
                 else:
                     return False
             except Exception as e:
-                log(e, 'error', title='exception filter_meta')
+                log("{}".format(e), 'error', title='exception in filter_meta')
                 return False
 
         return True
@@ -294,10 +296,16 @@ class Plants():
                 return
 
             if Logger.LOGGER_LEVEL < 3:
-                plant_data_from_api = app.get('points/{}'.format(save_point['id']))
-                save_point['meta'] = {**save_point['meta'], **plant_data_from_api['meta']}
+                if 'meta' in save_point:
+                    # to avoid replacing older point meta data, we load it and merge it
+                    log('Loading plant data from API for ID: {}'.format(save_point['id']), title='save_plant')
+                    plant_data_from_api = app.get('points/{}'.format(save_point['id']))
 
-                log('Saving Point after getting API meta: {}'.format(save_point), title='save_plant')
+                    if 'meta' in plant_data_from_api:
+                        # see https://stackoverflow.com/a/26853961
+                        save_point['meta'] = {**plant_data_from_api['meta'], **save_point['meta']}
+
+                log('Saving Point: {}'.format(save_point), title='save_plant')
 
                 endpoint = 'points/{}'.format(save_point['id'])
                 app.put(endpoint, payload=save_point)
