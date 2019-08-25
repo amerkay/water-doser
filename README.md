@@ -35,3 +35,7 @@ Smart Water Doser Farmware:
 ## PowerLoop's Input Variables Documentation
 
 [See manifest.json](manifest.json), includes extra "help" key with more information.
+
+## Example usage
+
+[Water all Farmbot plants using 'PowerLoop' farmware](https://github.com/amerkay/powerloop/blob/master/examples/Smart%20Watering%20for%20Farmbot.md), automatically calculating how many seconds to water each plant individually based on it's age and maximum spread from OpenFarm data.
