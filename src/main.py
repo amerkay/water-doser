@@ -49,33 +49,36 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
-        weather = Weather(FARMWARE_NAME, config=input_store.input)
+        # weather = Weather(FARMWARE_NAME, config=input_store.input)
+        # now = dt.today()
 
-        import aiohttp
+        # # goal: to add rainfall past 12 hours and next 6 hours
+        # # problem: Dark Sky return 24 hours since day start as combo of history/forecast
+        # #   get(now) will get 48 hour forcast
+        # #   eg if time is 27th 1am, get(now) will return 1 hour of history and 23 of forecast
+        # weather_hourly = weather.get_darksky_api_cached(now)['hourly']['data']
+        # # if before 1200, get and merge yesterday
+        # if now.time().hour < 12:
+        #     yesterday = now - timedelta(days=1)
+        #     weather_hourly = weather.get_darksky_api_cached(yesterday)['hourly']['data'] + weather_hourly
+        # # if before 1200, get and merge yesterday
+        # if now.time().hour > 18:
+        #     tomorrow = now + timedelta(days=1)
+        #     weather_hourly = weather_hourly + weather.get_darksky_api_cached(tomorrow)['hourly']['data']
 
-        # goal: to add rainfall past 12 hours and next 6 hours
-        # problem: Dark Sky return 24 hours since day start as combo of history/forecast
-        #   get(now) will get 48 hour forcast
-        #   eg if time is 27th 1am, get(now) will return 1 hour of history and 23 of forecast
-        weather_hourly = weather.get_darksky_api_cached(dt.now())['hourly']['data']
-        # if before 1200, get and merge yesterday
-        if dt.now().time().hour < 12:
-            yesterday = dt.now() - timedelta(days=6)
-            weather_hourly = weather.get_darksky_api_cached(yesterday)['hourly']['data'] + weather_hourly
-        # if before 1200, get and merge yesterday
-        if dt.now().time().hour > 18:
-            tomorrow = dt.now() + timedelta(days=1)
-            weather_hourly = weather_hourly + weather.get_darksky_api_cached(tomorrow)['hourly']['data']
+        # precip = 0
+        # for h in weather_hourly:
+        #     hour_date = dt.fromtimestamp(h['time'])
 
-        # points_sorted = sorted(points, key=lambda elem: (int(elem['x']), int(elem['y'])))
-        for h in weather_hourly:
-            hour_date = dt.fromtimestamp(h['time'])
-            print("{}, precipIntensity {}, precipProbability {}, temperature {}".format(
-                hour_date, h['precipIntensity'], h['precipProbability'], h['temperature']))
+        #     # if time of hour 6 hours in the future or 12 hours in the past, use them
+        #     hours_diff = (now.timestamp() - hour_date.timestamp())/3600
+        #     if -6 <= hours_diff <= 12:
+        #         # from Dark Sky docs precipIntensity SI unit: Millimeters per hour.
+        #         precip += h['precipIntensity'] * h['precipProbability']
+        #         # print("{}, precipIntensity {}, precipProbability {}, temperature {}".format(
+        #         #     hour_date, h['precipIntensity'], h['precipProbability'], h['temperature']))
 
-            # from Dark Sky docs precipIntensity SI unit: Millimeters per hour.
-            # so we multiply precipIntensity*precipProbability to get
-
+        # log('Precipitation sum for window {}'.format(precip), message_type='info', title="init")
         # exit()
 
         currpos = device.get_current_position()
