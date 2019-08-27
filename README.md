@@ -2,7 +2,7 @@
 
 From current position, finds closest plant, and automatically calculates how much water to dose it in milliseconds.
 
-Calculation is based on spread and height parameters from OpenFarm. Parameters can be modified from configuration, see [manifest](manifest.json).
+Calculation is based on spread and height parameters from OpenFarm along with plant age. Parameters can be modified from configuration, see [manifest](manifest.json).
 
 Uses SimpleCache, based on built in Pickle to cache API calls.
 
@@ -10,7 +10,7 @@ Uses SimpleCache, based on built in Pickle to cache API calls.
 
 > Smart Watering functions adapted from https://github.com/etcipnja/MLH, thank you @etcipnja!
 
-> TODO: check the weather for past/expected rain and adapt dose
+> IN PROGRESS: Check the weather from Dark Sky API for past/expected rain and adapt dose within a window of time (last 12 hours, next 6 hours).
 
 ## Installation
 
@@ -28,8 +28,8 @@ I tried to add as much comments and documentation within the files, as well as c
 Smart Water Doser Farmware:
 
 - From current Farmbot position, guesses which plant within area set and loads the point.
-- Then uses spread and age from to decide how many ml/ms to water the plant.
-- Caching OpenFarm and other expensive (slow) API calls using SimpleCache file cachine.
+- Then uses spread and height from OpenFarm and age to decide how many ml/ms to water the plant.
+- Caching OpenFarm and other expensive (slow) API calls using SimpleCache file caching.
 - Write digital watering PIN ON, then wait for calculated period, then OFF.
 
 ## PowerLoop's Input Variables Documentation
