@@ -1,7 +1,6 @@
 import requests
 
 # from datetime import datetime as dt
-import time
 from datetime import datetime as dt
 from input_store import InputStore
 from simple_cache import SimpleCache as cache

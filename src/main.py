@@ -8,10 +8,6 @@ from input_store import InputStore
 from water_dose import WaterDose
 from plants import Plants
 from control import Control
-from weather import Weather
-
-from datetime import datetime as dt, timedelta
-from dateutil.parser import parse
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -49,6 +45,8 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
+        # from weather import Weather
+        # from datetime import datetime as dt, timedelta
         # weather = Weather(FARMWARE_NAME, config=input_store.input)
         # now = dt.today()
 
