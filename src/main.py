@@ -8,6 +8,10 @@ from input_store import InputStore
 from water_dose import WaterDose
 from plants import Plants
 from control import Control
+from weather import Weather
+
+from datetime import datetime as dt, timedelta
+from dateutil.parser import parse
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -45,8 +49,37 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
-        currpos = {'x': 680, 'y': 380} if device.get_current_position() is None \
-            else device.get_current_position()
+        weather = Weather(FARMWARE_NAME, config=input_store.input)
+
+        import aiohttp
+
+        # goal: to add rainfall past 12 hours and next 6 hours
+        # problem: Dark Sky return 24 hours since day start as combo of history/forecast
+        #   get(now) will get 48 hour forcast
+        #   eg if time is 27th 1am, get(now) will return 1 hour of history and 23 of forecast
+        weather_hourly = weather.get_darksky_api_cached(dt.now())['hourly']['data']
+        # if before 1200, get and merge yesterday
+        if dt.now().time().hour < 12:
+            yesterday = dt.now() - timedelta(days=6)
+            weather_hourly = weather.get_darksky_api_cached(yesterday)['hourly']['data'] + weather_hourly
+        # if before 1200, get and merge yesterday
+        if dt.now().time().hour > 18:
+            tomorrow = dt.now() + timedelta(days=1)
+            weather_hourly = weather_hourly + weather.get_darksky_api_cached(tomorrow)['hourly']['data']
+
+        # points_sorted = sorted(points, key=lambda elem: (int(elem['x']), int(elem['y'])))
+        for h in weather_hourly:
+            hour_date = dt.fromtimestamp(h['time'])
+            print("{}, precipIntensity {}, precipProbability {}, temperature {}".format(
+                hour_date, h['precipIntensity'], h['precipProbability'], h['temperature']))
+
+            # from Dark Sky docs precipIntensity SI unit: Millimeters per hour.
+            # so we multiply precipIntensity*precipProbability to get
+
+        # exit()
+
+        currpos = device.get_current_position()
+        currpos = {'x': 680, 'y': 380} if currpos is None else currpos
 
         # init instances
         water_dose = WaterDose(FARMWARE_NAME, input_store.input)

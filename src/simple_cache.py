@@ -1,3 +1,7 @@
+"""
+A simple native Python3 disk cache
+"""
+
 import time
 import pickle
 import os
@@ -27,13 +31,11 @@ class SimpleCache():
 
     log("Using PATH: {}".format(PATH), title="SimpleCache")
 
-    # Looks like: {"id": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
+    # Looks like: {"cache_id01": {"saved_at": '#date#', "lifetime": 60 * 60 * 1000, "content": []}}
     cache_store = {}
 
     @staticmethod
     def init():
-        log("In init()", "success", title="SimpleCache")
-
         try:
             # if cache file not modified in 48 hours or empty, don't load it
             if time.time() - os.path.getmtime(SimpleCache.PATH) < 48 * 60 * 60 \
@@ -42,6 +44,8 @@ class SimpleCache():
                     SimpleCache.cache_store = pickle.load(handle)
                     log("Loaded {} cached items from disk".format(len(SimpleCache.cache_store)),
                         title="SimpleCache")
+
+                SimpleCache._garbage_collect()
             else:
                 log("Nothing to load from disk", title="SimpleCache")
         except Exception as e:
@@ -60,10 +64,7 @@ class SimpleCache():
             SimpleCache.cache_store[cache_id]["lifetime"] = lifetime_s
             SimpleCache.cache_store[cache_id]["saved_at"] = time.time()
 
-            # save to disk
-            with open(SimpleCache.PATH, 'wb') as handle:
-                pickle.dump(SimpleCache.cache_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                log("Saved cache to disk, len {}".format(len(SimpleCache.cache_store)), title="SimpleCache")
+            SimpleCache._sync()
 
     @staticmethod
     def get(cache_id):
@@ -83,6 +84,36 @@ class SimpleCache():
     @staticmethod
     def _chk_id(cache_id):
         return str(cache_id)
+
+    @staticmethod
+    def _del_from_dict_list(source_list, dict_id):
+        """ Delete dict with 'id' = dict_id from source_list
+        See https://stackoverflow.com/a/31068594
+
+        Arguments:
+            source_list {list of dicts} -- with 'id' value set
+            dict_id {int} -- Used to match dict to delete with 'id' = dict_id
+        """
+        return [d for d in source_list if d['id'] != dict_id]
+
+    @staticmethod
+    def _sync():
+        """ Save SimpleCache.cache_store to disk """
+        with open(SimpleCache.PATH, 'wb') as handle:
+            pickle.dump(SimpleCache.cache_store, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            log("Saved cache to disk, len {}".format(len(SimpleCache.cache_store)), title="SimpleCache")
+
+    @staticmethod
+    def _garbage_collect():
+        is_changed = False
+
+        for c_id, c_val in SimpleCache.cache_store.items():
+            # if expired, purge from cache
+            if c_val["saved_at"] + c_val["lifetime"] < time.time():
+                del SimpleCache.cache_store[c_id]
+
+        if is_changed is True:
+            SimpleCache._sync()
 
 
 # run init()
