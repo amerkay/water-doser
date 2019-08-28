@@ -108,14 +108,18 @@ class SimpleCache():
     @staticmethod
     def _garbage_collect():
         is_changed = False
+        cache_store_out = SimpleCache.cache_store.copy()
 
         for c_id, c_val in SimpleCache.cache_store.items():
             # if expired, purge from cache
             if c_val["saved_at"] + c_val["lifetime"] < time.time():
-                del SimpleCache.cache_store[c_id]
+                del cache_store_out[c_id]
 
         if is_changed is True:
             SimpleCache._sync()
+            log("Garbage collection: {} items removed".format(
+                len(SimpleCache.cache_store) - len(cache_store_out)),
+                title="SimpleCache")
 
 
 # run init()
