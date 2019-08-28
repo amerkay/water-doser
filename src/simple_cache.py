@@ -44,10 +44,7 @@ class SimpleCache():
                     SimpleCache.cache_store = pickle.load(handle)
                     log("Loaded {} cached items from disk".format(len(SimpleCache.cache_store)),
                         title="SimpleCache")
-                try:
-                    SimpleCache._garbage_collect()
-                except:
-                    pass
+                SimpleCache._garbage_collect()
             else:
                 log("Nothing to load from disk", title="SimpleCache")
         except Exception as e:
