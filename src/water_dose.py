@@ -82,13 +82,13 @@ class WaterDose():
         # how much to water in ml, minimum value for ms is 250ms
         ml = int(round(supposed_watering)) if supposed_watering > 0 else 0
         ml_corrected_to_precip = ml - precip
-        ms = max(int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000), 250)
+        ms = int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000)
 
         log("Water {} {}ml; for {}ms (precip {})".format(plant['openfarm_slug'], ml, ms, precip),
             title="calc_watering_ms")
 
-        # return only positive values, else 0
-        return max(ms, 0)
+        # return only positive values above 250, else 250
+        return max(ms, 250)
 
     def _plant_age(self, p):
         if p['pointer_type'].lower() != 'plant' or p['plant_stage'].lower() != 'planted' \
@@ -101,5 +101,8 @@ class WaterDose():
     def _get_supposed_watering(self, max_spread, age):
         step = max_spread / float(self.config["plant_adult_age_weeks"] * 7)
         d = step * age
+
+        log("max_spread {}, age {}, step {}, d {}, age float {}".format(max_spread, age, step, d, float(self.config["plant_adult_age_weeks"] * 7)),
+            title="_get_supposed_watering")
 
         return int(d * self.config["to_ml_multiplier"])
