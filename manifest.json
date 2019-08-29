@@ -3,7 +3,7 @@
     "language": "python",
     "author": "amerkay",
     "description": "Smart Water Doser for Farmbot: Automatically figures out which plant Farmbot is above and calculates how much water to dose each plant by age and OpenFarm spread and height data. The code is as annotated as could be, so have a look at https://github.com/amerkay/water-doser/",
-    "version": "0.1.10",
+    "version": "0.2.0",
     "min_os_version_major": 6,
     "url": "https://raw.githubusercontent.com/amerkay/water-doser/master/manifest.json",
     "zip": "https://github.com/amerkay/water-doser/archive/master.zip",
@@ -36,13 +36,13 @@
     },
     {
         "name": "weather_lat",
-        "label": "TODO Farmbot's location Latitude from (lat,lon) for weather/rain reports.",
+        "label": "Farmbot's location Latitude from (lat,lon) for weather/rain reports. Using Dark Sky API.",
         "help": [""],
         "value": "47.25"
     },
     {
         "name": "weather_lon",
-        "label": "TODO Farmbot's location Longitude from (lat,lon) for weather/rain reports.",
+        "label": "Farmbot's location Longitude from (lat,lon) for weather/rain reports. Using Dark Sky API.",
         "help": [""],
         "value": "-122.45"
     },

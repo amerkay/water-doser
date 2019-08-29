@@ -8,6 +8,7 @@ from input_store import InputStore
 from water_dose import WaterDose
 from plants import Plants
 from control import Control
+from weather import Weather
 
 # import static logger and create shortcut function
 from logger import Logger
@@ -25,7 +26,7 @@ INPUT_DEFAULTS = {
     'to_ml_multiplier': (3, 'int'),
     'weather_lat': (47.25, 'float'),
     'weather_lon': (-122.45, 'float'),
-    'debug': (2, 'int')
+    'debug': (3, 'int')
 }
 
 if __name__ == "__main__":
@@ -45,42 +46,11 @@ if __name__ == "__main__":
 
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
-        # from weather import Weather
-        # from datetime import datetime as dt, timedelta
-        # weather = Weather(FARMWARE_NAME, config=input_store.input)
-        # now = dt.today()
-
-        # # goal: to add rainfall past 12 hours and next 6 hours
-        # # problem: Dark Sky return 24 hours since day start as combo of history/forecast
-        # #   get(now) will get 48 hour forcast
-        # #   eg if time is 27th 1am, get(now) will return 1 hour of history and 23 of forecast
-        # weather_hourly = weather.get_darksky_api_cached(now)['hourly']['data']
-        # # if before 1200, get and merge yesterday
-        # if now.time().hour < 12:
-        #     yesterday = now - timedelta(days=1)
-        #     weather_hourly = weather.get_darksky_api_cached(yesterday)['hourly']['data'] + weather_hourly
-        # # if before 1200, get and merge yesterday
-        # if now.time().hour > 18:
-        #     tomorrow = now + timedelta(days=1)
-        #     weather_hourly = weather_hourly + weather.get_darksky_api_cached(tomorrow)['hourly']['data']
-
-        # precip = 0
-        # for h in weather_hourly:
-        #     hour_date = dt.fromtimestamp(h['time'])
-
-        #     # if time of hour 6 hours in the future or 12 hours in the past, use them
-        #     hours_diff = (now.timestamp() - hour_date.timestamp())/3600
-        #     if -6 <= hours_diff <= 12:
-        #         # from Dark Sky docs precipIntensity SI unit: Millimeters per hour.
-        #         precip += h['precipIntensity'] * h['precipProbability']
-        #         # print("{}, precipIntensity {}, precipProbability {}, temperature {}".format(
-        #         #     hour_date, h['precipIntensity'], h['precipProbability'], h['temperature']))
-
-        # log('Precipitation sum for window {}'.format(precip), message_type='info', title="init")
-        # exit()
-
         currpos = device.get_current_position()
         currpos = {'x': 680, 'y': 380} if currpos is None else currpos
+
+        # Dark Sky API, see get_precip() function for more information.
+        weather = Weather(FARMWARE_NAME, config=input_store.input)
 
         # init instances
         water_dose = WaterDose(FARMWARE_NAME, input_store.input)
@@ -100,12 +70,13 @@ if __name__ == "__main__":
 
         # get closest plant to currpos
         points_sorted = PointSort.sort_points_by_dist(points_plants, currpos)
+
         if len(points_sorted) > 0:
             plant_closest = points_sorted[0]
             log("closest_point is {}".format(plant_closest), title="main")
 
-            # use spread and age from MLH to decide Xms to water.
-            dose_ms = water_dose.calc_watering_params(plant_closest)
+            # use spread and age to decide Xms to water.
+            dose_ms = water_dose.calc_watering_ms(plant_closest, precip=weather.get_precip())
             control.execute_watering(dose_ms)
         else:
             log("No close points, moving on.", "info", title="main")

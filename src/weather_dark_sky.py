@@ -1,7 +1,7 @@
 import requests
 
 # from datetime import datetime as dt
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from input_store import InputStore
 from simple_cache import SimpleCache as cache
 
@@ -94,3 +94,47 @@ class Weather():
         log("Dark Sky API returned dict with {} keys".format(len(response.json())), title='get_darksky_api')
 
         return response.json()
+
+    def get_precip(self):
+        """ Sums rainfall within window of: past 12 hours and forecast of next 6 hours.
+
+        Notes:
+        - Dark Sky return 24 hours since day start as combo of history/forecast.
+            e.g. if time is 27th 1am, get(today) will return 1 hour of history and 23 of forecast.
+
+        Returns:
+            float -- Sum of precipIntensity within hours-window. SI unit: Millimeters (per sqm) per hour.
+        """
+        now = dt.today()
+
+        # Get precipitation date from Dark Sky API
+        weather_hourly = self.get_darksky_api_cached(now)['hourly']['data']
+        # if before 1200, get and merge yesterday
+        if now.time().hour < 12:
+            yesterday = now - timedelta(days=1)
+            weather_hourly = self.get_darksky_api_cached(yesterday)['hourly']['data'] + weather_hourly
+        # if before 1200, get and merge yesterday
+        if now.time().hour > 18:
+            tomorrow = now + timedelta(days=1)
+            weather_hourly = weather_hourly + self.get_darksky_api_cached(tomorrow)['hourly']['data']
+
+        # sum precipitation within window
+        precip_sum = 0
+        count = 0
+        for h in weather_hourly:
+            hour_date = dt.fromtimestamp(h['time'])
+
+            # if time of hour 6 hours in the future or 12 hours in the past, use them
+            hours_diff = (now.timestamp() - hour_date.timestamp()) / 3600
+            if -6 <= hours_diff <= 12:
+                # from Dark Sky docs precipIntensity SI unit: Millimeters per hour.
+                precip_sum += h['precipIntensity'] * h['precipProbability']
+                count += 1
+                # print("{}, precipIntensity {}, precipProbability {}, temperature {}".format(
+                #     hour_date, h['precipIntensity'], h['precipProbability'], h['temperature']))
+
+        log('Precipitation sum for window {} of {} hours'.format(precip_sum, count),
+            message_type='info',
+            title="init")
+
+        return precip_sum

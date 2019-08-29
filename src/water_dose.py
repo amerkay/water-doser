@@ -30,17 +30,26 @@ class WaterDose():
         self.farmwarename = farmwarename
         self.config = InputStore.merge_config(self.config, config)
 
-    # small_rain = 1  # 1mm is a small rain (cancells watering today)
-    # medium_rain = 10  # 10mm is a medium rain (cancells watering today and tomorrow)
-    # big_rain = 20  # 20mm is a big rain (cancells watering today, tomorrow and day after tomorrow)
+    def calc_watering_ms(self, plant, precip=0.0):
+        """ Gets plant data if not already stored in Plant's 'meta' data dict, and save it.
 
-    def calc_watering_params(self, plant):
+        Arguments:
+            plant {dict} -- Single Plant dict
+
+        Keyword Arguments:
+            precip {float} -- Sum of precipIntensity within 18-hour window (12 historical rain, 6 forecasted).
+            Uses SI unit: Millimeters (per sqm) per hour. (default: {0})
+            TODO: Allow deciding window from manifest inputs.
+
+        Returns:
+            bool -- [description]
+        """
         age = self._plant_age(plant)
         if age == 0:
             return False
 
         # get OpenFarm data
-        log("Plant meta: {}".format(plant['meta']), "success", title="calc_watering_params")
+        log("Plant meta: {}".format(plant['meta']), "success", title="calc_watering_ms")
 
         if 'height' not in plant['meta'] or 'spread' not in plant['meta']:
             try:
@@ -60,7 +69,7 @@ class WaterDose():
             except Exception as e:
                 log("Openfarm did not return results for {}, consider updated OpenFarm entry. {}".format(
                     plant['openfarm_slug'], e),
-                    title="calc_watering_params")
+                    title="calc_watering_ms")
                 plant['meta']['spread'] = 5 * 10
                 plant['meta']['height'] = 5 * 10
         else:
@@ -72,12 +81,14 @@ class WaterDose():
 
         # how much to water in ml, minimum value for ms is 250ms
         ml = int(round(supposed_watering)) if supposed_watering > 0 else 0
-        ms = max(int(ml / self.config["water_ml_per_sec"] * 1000), 250)
+        ml_corrected_to_precip = ml - precip
+        ms = max(int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000), 250)
 
-        log("Water {} {}ml; for {}ms".format(plant['openfarm_slug'], ml, ms),
-            title="calc_watering_params")
+        log("Water {} {}ml; for {}ms (precip {})".format(plant['openfarm_slug'], ml, ms, precip),
+            title="calc_watering_ms")
 
-        return ms
+        # return only positive values, else 0
+        return max(ms, 0)
 
     def _plant_age(self, p):
         if p['pointer_type'].lower() != 'plant' or p['plant_stage'].lower() != 'planted' \
