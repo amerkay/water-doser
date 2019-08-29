@@ -8,7 +8,7 @@ from input_store import InputStore
 from water_dose import WaterDose
 from plants import Plants
 from control import Control
-from weather import Weather
+from weather_dark_sky import Weather
 
 # import static logger and create shortcut function
 from logger import Logger
