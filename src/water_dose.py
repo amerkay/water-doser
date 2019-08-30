@@ -64,7 +64,7 @@ class WaterDose():
 
         ms = 0
         if ml_corrected_to_precip > 0:
-            ms = int(ml_corrected_to_precip / self.config["water_ml_per_sec"]) * 1000
+            ms = int(ml_corrected_to_precip / self.config["water_ml_per_sec"] * 1000)
 
         log("Water {} {}ml; for {}ms (precip {}, rain_ml {} on area {})".format(
             plant['openfarm_slug'], ml, ms, precip, rain_ml, area_plant),

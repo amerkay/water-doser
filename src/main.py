@@ -47,9 +47,9 @@ if __name__ == "__main__":
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
         currpos = device.get_current_position()
-        currpos = {'x': 0, 'y': 0} if currpos is None else currpos
-        # currpos = {'x': 650, 'y': 880} # arugula
-        # currpos = {'x': 680, 'y': 380} # radish
+        # currpos = {'x': 0, 'y': 0} if currpos is None else currpos
+        currpos = {'x': 650, 'y': 880} if currpos is None else currpos # arugula
+        # currpos = {'x': 680, 'y': 380} if currpos is None else currpos # radish
 
         # Dark Sky API, see get_precip() function for more information.
         weather = Weather(FARMWARE_NAME, config=input_store.input)
