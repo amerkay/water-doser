@@ -3,7 +3,7 @@
     "language": "python",
     "author": "amerkay",
     "description": "Smart Water Doser for Farmbot: Automatically figures out which plant Farmbot is above and calculates how much water to dose each plant by age and OpenFarm spread and height data. The code is as annotated as could be, so have a look at https://github.com/amerkay/water-doser/",
-    "version": "0.2.2",
+    "version": "0.2.4",
     "min_os_version_major": 6,
     "url": "https://raw.githubusercontent.com/amerkay/water-doser/master/manifest.json",
     "zip": "https://github.com/amerkay/water-doser/archive/master.zip",
@@ -24,15 +24,15 @@
     },
     {
         "name": "plant_adult_age_weeks",
-        "label": "Assumption: at 15 weeks a plant becomes an adult (i.e. takes the full height and spread)",
+        "label": "Assumption: depending on what you planted, at X weeks a plant becomes an adult (i.e. takes the full height and spread). Default 12.",
         "help": ["TODO, better per plant information source"],
-        "value": "15"
+        "value": "12"
     },
     {
         "name": "to_ml_multiplier",
-        "label": "Mutiplier to convert plant size to ml needed for watering. Default 3. Lower means less water.",
-        "help": ["2-4 is a good range, depending on your plants. "],
-        "value": "3"
+        "label": "Water plant in ml, for each 0.01 of plant volume in m^2, modulated for plant age. Default 75 ml/0.01m^2. Lower means less water.",
+        "help": ["See water_dose.py for more information."],
+        "value": "75"
     },
     {
         "name": "weather_lat",

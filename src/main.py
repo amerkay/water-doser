@@ -22,8 +22,8 @@ FARMWARE_NAME = "water-doser-dev"
 INPUT_DEFAULTS = {
     'plant_search_radius': (40, 'int'),
     'water_ml_per_sec': (100, 'int'),
-    'plant_adult_age_weeks': (15, 'int'),
-    'to_ml_multiplier': (3, 'int'),
+    'plant_adult_age_weeks': (8, 'int'),
+    'to_ml_multiplier': (75, 'int'),
     'weather_lat': (47.25, 'float'),
     'weather_lon': (-122.45, 'float'),
     'debug': (3, 'int')
@@ -47,7 +47,9 @@ if __name__ == "__main__":
         log('Started with python version {}'.format(sys.version_info), message_type='info', title="init")
 
         currpos = device.get_current_position()
-        currpos = {'x': 680, 'y': 380} if currpos is None else currpos
+        currpos = {'x': 0, 'y': 0} if currpos is None else currpos
+        # currpos = {'x': 650, 'y': 880} # arugula
+        # currpos = {'x': 680, 'y': 380} # radish
 
         # Dark Sky API, see get_precip() function for more information.
         weather = Weather(FARMWARE_NAME, config=input_store.input)

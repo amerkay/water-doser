@@ -8,7 +8,7 @@ Uses SimpleCache, based on built in Pickle to cache API calls.
 
 > FARMBOT_OS 6. Tested only on 7.0.1 for now. Should work on 6. Please open an [issue](../../issues) with any problems.
 
-> I need help coming up with a better function for water plants with the data available, including weather information. If you have better ideas than the current implementation, please open an issue or message me. Currently using plant age * size from OpenFarm * multiplier method adapted from https://github.com/etcipnja/MLH, thank you @etcipnja!
+> I need help coming up with a better function for water plants with the data available, including weather information. If you have better ideas than the current implementation, please open an issue or message me. Current method in [water_dose.py](https://github.com/amerkay/water-doser/blob/master/src/water_dose.py) `\_get_supposed_watering()` function, adapted from https://github.com/etcipnja/MLH, thank you @etcipnja!
 
 ## Installation
 

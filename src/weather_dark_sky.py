@@ -43,7 +43,7 @@ class Weather():
         time_str = f'{on_date:%Y-%m-%d}' if on_date is not None and isinstance(on_date, dt) else "now"
         cache_id = "darksky_{}_{}_{}".format(self.config['weather_lat'], self.config['weather_lon'], time_str)
         # cache for 48 hours if date in past, otherwise shorter period
-        lifetime = 48 * 60 * 60 if on_date and on_date.day < dt.now().day else 1 * 60 * 60
+        lifetime = 48 * 60 * 60 if on_date and on_date.day < dt.now().day else 5 * 60
 
         if cache.is_cached(cache_id):
             response = cache.get(cache_id)
