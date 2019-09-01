@@ -12,8 +12,8 @@
     "config": [
     {
         "name": "plant_search_radius",
-        "label": "Use current location to search for closest plant within this radius.",
-        "help": ["Default 40mm, plus minus"],
+        "label": "Use current location to search for closest plant within this radius. Default 40mm, plus/minus.",
+        "help": [""],
         "value": "40"
     },
     {
