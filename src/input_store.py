@@ -4,10 +4,11 @@ import random
 
 # import static logger and create shortcut function
 from logger import Logger
+
 log = Logger.log
 
 
-class InputStore():
+class InputStore:
     """ InputStore class to load user input settings or defaults. """
 
     def __init__(self, farmwarename, defaults={}):
@@ -43,17 +44,17 @@ class InputStore():
 
     def get_input_env(self):
         """ Get input variables values. """
-        prefix = self.farmwarename.replace('-', '_')
-        log('using prefix {}'.format(prefix), 'info', title='get_input_env')
+        prefix = self.farmwarename.replace("-", "_")
+        log("using prefix {}".format(prefix), "info", title="get_input_env")
 
         # get all inputs values
         for key, settings in self.default_inputs.items():
             self.input[key] = self.get_input_val(key, settings, prefix)
 
         for key, val in self.input.items():
-            log('input {}: {}'.format(key, val), title='get_input_env')
+            log("input {}: {}".format(key, val), title="get_input_env")
 
-    def get_input_val(self, key, settings=('None', 'str'), prefix='farmware'):
+    def get_input_val(self, key, settings=("None", "str"), prefix="farmware"):
         """ Get input values and sanitize them. None values returned for easy checking with 'is None'.
 
         Arguments:
@@ -69,28 +70,40 @@ class InputStore():
         """
 
         # get the value set by user or default
-        val = os.environ.get('{p}_{k}'.format(p=prefix, k=key), settings[0])
+        val = os.environ.get("{p}_{k}".format(p=prefix, k=key), settings[0])
 
         # remove trailing spaces and convert the value to lower case
         val_clean_str = str(val).lower().strip()
 
         # set the expected value type for post-processing
-        val_type = settings[1] if settings[1] in ['str', 'int', 'bool', 'list', 'float', 'xycoord'] else 'str'
+        val_type = (
+            settings[1]
+            if settings[1] in ["str", "int", "bool", "list", "float", "xycoord"]
+            else "str"
+        )
 
-        if val_type == 'int':
-            return int(self.is_randint(val)) if val_clean_str != 'none' else None
-        elif val_type == 'float':
-            return float(val) if val_clean_str != 'none' else None
-        elif val_type == 'bool':
-            return val_clean_str in ['true', '1', 'y', 'yes', 'on']
-        elif val_type == 'list':
-            return val_clean_str.replace(" , ", ",").replace(", ", ",")\
-                .replace(" ,", ",").split(",") if val_clean_str != 'none' else []
-        elif val_type == 'xycoord':
-            return self.parse_xy_pair(val_clean_str) if val_clean_str != 'none' else None
+        if val_type == "int":
+            return int(self.is_randint(val)) if val_clean_str != "none" else None
+        elif val_type == "float":
+            return float(val) if val_clean_str != "none" else None
+        elif val_type == "bool":
+            return val_clean_str in ["true", "1", "y", "yes", "on"]
+        elif val_type == "list":
+            return (
+                val_clean_str.replace(" , ", ",")
+                .replace(", ", ",")
+                .replace(" ,", ",")
+                .split(",")
+                if val_clean_str != "none"
+                else []
+            )
+        elif val_type == "xycoord":
+            return (
+                self.parse_xy_pair(val_clean_str) if val_clean_str != "none" else None
+            )
 
         # default treat like str
-        return str(val).strip() if val_clean_str != 'none' else None
+        return str(val).strip() if val_clean_str != "none" else None
 
     def is_randint(self, val):
         """is_randint
@@ -133,10 +146,10 @@ class InputStore():
             m = re.findall(r"\(([+-]?\d+),([+-]?\d+)\)", str_in)
             if len(m) > 0 and len(m[0]) == 2:
                 # build pair (x, y) and return it
-                return {'x': int(m[0][0]), 'y': int(m[0][1])}
+                return {"x": int(m[0][0]), "y": int(m[0][1])}
 
         # should not reach here if parse correctled, see previous return statement
-        log('str_in {} could not be parsed'.format(str_in), title='parse_xy_pair')
+        log("str_in {} could not be parsed".format(str_in), title="parse_xy_pair")
         return None
 
     @staticmethod
@@ -161,10 +174,14 @@ class InputStore():
                 if k in default_config:
                     merged_config[k] = v
 
-            log("configs merged: {}".format(merged_config), title='merge_config')
+            log("configs merged: {}".format(merged_config), title="merge_config")
             return merged_config
         else:
-            log("configs must be dicts, instead got {} and {}".format(type(default_config), type(new_config)),
-                'error',
-                title='merge_config')
-            raise Exception('configs must be a dict in merge_config')
+            log(
+                "configs must be dicts, instead got {} and {}".format(
+                    type(default_config), type(new_config)
+                ),
+                "error",
+                title="merge_config",
+            )
+            raise Exception("configs must be a dict in merge_config")

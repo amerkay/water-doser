@@ -3,10 +3,11 @@ from simple_cache import SimpleCache as cache
 
 # import static logger and create shortcut function
 from logger import Logger
+
 log = Logger.log
 
 
-class Openfarm():
+class Openfarm:
     """ Contact Openfarm API, disk cache enabled
 
     Variables:
@@ -22,6 +23,7 @@ class Openfarm():
             ...
         }
     """
+
     ATTRIBUTE_FIELDS_ALLOWED = ["spread", "height", "slug"]
 
     @staticmethod
@@ -36,16 +38,24 @@ class Openfarm():
             set -- of attributes for plant_slug result, see ATTRIBUTE_FIELDS_ALLOWED
         """
         cache_id = "openfarm-attribs-{}".format(plant_slug)
-        lifetime = 12*60*60
+        lifetime = 12 * 60 * 60
 
         if cache.is_cached(cache_id):
             res = cache.get(cache_id)
-            log("hit; returning openfarm response from cache: {}".format(res), title='get_openfarm_attribs')
+            log(
+                "hit; returning openfarm response from cache: {}".format(res),
+                title="get_openfarm_attribs",
+            )
             return res
         else:
-            log("miss; contacting openfarm API for {}".format(plant_slug), title='get_openfarm_attribs')
+            log(
+                "miss; contacting openfarm API for {}".format(plant_slug),
+                title="get_openfarm_attribs",
+            )
 
-            response = requests.get('https://openfarm.cc/api/v1/crops?filter={}'.format(plant_slug))
+            response = requests.get(
+                "https://openfarm.cc/api/v1/crops?filter={}".format(plant_slug)
+            )
             response.raise_for_status()
 
             filtered_response = Openfarm._extract_attr_set(response.json())
@@ -64,7 +74,7 @@ class Openfarm():
         """
         filtered_response = {}
 
-        for key, val in openfarm_response['data'][0]['attributes'].items():
+        for key, val in openfarm_response["data"][0]["attributes"].items():
             if key in Openfarm.ATTRIBUTE_FIELDS_ALLOWED:
                 filtered_response[key] = val
 
