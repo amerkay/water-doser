@@ -27,7 +27,6 @@ INPUT_DEFAULTS = {
     "to_ml_multiplier": (75, "int"),
     "weather_lat": (47.25, "float"),
     "weather_lon": (-122.45, "float"),
-    "": ("test"),
     "debug": (3, "int"),
 }
 
