@@ -132,7 +132,8 @@ class WaterDose:
         age_adult = self.config["plant_adult_age_weeks"] * 7
         area_adult = (spread_max * height_max) / 1000 ** 2
 
-        # for each 0.01m^2 of plant area, output user-set to_ml_multiplier in ml, modulated for age
+        # for each 0.01m^2 of plant area (10cm x 10cm), output user-set to_ml_multiplier in ml,
+        # modulated for age
         ml_water_max = (area_adult / 0.01) * self.config["to_ml_multiplier"]
         ml_water = (ml_water_max / age_adult) * age
 

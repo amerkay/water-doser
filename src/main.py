@@ -55,11 +55,10 @@ if __name__ == "__main__":
 
         currpos = device.get_current_position()
         # currpos = {'x': 0, 'y': 0} if currpos is None else currpos
-        currpos = {"x": 650, "y": 880} if currpos is None else currpos  # arugula
+        currpos = (
+            {"x": 650, "y": 880} if currpos is None else currpos
+        )  # arugula default for debugging
         # currpos = {'x': 680, 'y': 380} if currpos is None else currpos # radish
-
-        # Dark Sky API, see get_precip() function for more information.
-        weather = Weather(FARMWARE_NAME, config=input_store.input)
 
         # init instances
         water_dose = WaterDose(FARMWARE_NAME, input_store.input)
@@ -86,13 +85,20 @@ if __name__ == "__main__":
             plant_closest = points_sorted[0]
             log("closest_point is {}".format(plant_closest), title="main")
 
+            # only use weather if neither lat/lon are None
+            weather_precip = 0.0
+            if None not in (input_store.input["weather_lat"], input_store.input["weather_lon"]):
+                # Dark Sky API, see get_precip() function for more information.
+                weather = Weather(FARMWARE_NAME, config=input_store.input)
+                weather_precip = weather.get_precip()
+
             # use spread and age to decide Xms to water.
             dose_ms = water_dose.calc_watering_ms(
-                plant_closest, precip=weather.get_precip()
+                plant_closest, precip=weather_precip
             )
             control.execute_watering(dose_ms)
         else:
-            log("No close points, moving on.", "info", title="main")
+            log("No close points, moving on.", "error", title="main")
 
     except Exception as e:
         log(
