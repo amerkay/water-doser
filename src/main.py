@@ -70,10 +70,10 @@ if __name__ == "__main__":
             FARMWARE_NAME,
             config={
                 "filter_plant_stage": ["planted", "sprouted"],
-                "filter_min_x": currpos["x"] - plant_search_radius,
-                "filter_max_x": currpos["x"] + plant_search_radius,
-                "filter_min_y": currpos["y"] - plant_search_radius,
-                "filter_max_y": currpos["y"] + plant_search_radius,
+                "filter_min_x": int(float(currpos["x"])) - plant_search_radius,
+                "filter_max_x": int(float(currpos["x"])) + plant_search_radius,
+                "filter_min_y": int(float(currpos["y"])) - plant_search_radius,
+                "filter_max_y": int(float(currpos["y"])) + plant_search_radius,
             },
         )
         points_plants = plants.load_points_with_filters()
@@ -87,15 +87,16 @@ if __name__ == "__main__":
 
             # only use weather if neither lat/lon are None
             weather_precip = 0.0
-            if None not in (input_store.input["weather_lat"], input_store.input["weather_lon"]):
+            if None not in (
+                input_store.input["weather_lat"],
+                input_store.input["weather_lon"],
+            ):
                 # Dark Sky API, see get_precip() function for more information.
                 weather = Weather(FARMWARE_NAME, config=input_store.input)
                 weather_precip = weather.get_precip()
 
             # use spread and age to decide Xms to water.
-            dose_ms = water_dose.calc_watering_ms(
-                plant_closest, precip=weather_precip
-            )
+            dose_ms = water_dose.calc_watering_ms(plant_closest, precip=weather_precip)
             control.execute_watering(dose_ms)
         else:
             log("No close points, moving on.", "error", title="main")
