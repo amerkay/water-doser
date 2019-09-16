@@ -6,7 +6,7 @@
     "package_version": "0.2.8",
     "farmware_manifest_version": "2.0.0",
     "farmbot_os_version_requirement": ">= 8.0.0",
-    "url": "https://raw.githubusercontent.com/amerkay/water-doser/master/manifest.json",
+    "url": "https://raw.githubusercontent.com/amerkay/water-doser/master/manifest_v2.json",
     "zip": "https://github.com/amerkay/water-doser/archive/master.zip",
     "executable": "python",
     "args": "water-doser-master/src/main.py",
