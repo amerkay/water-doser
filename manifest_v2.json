@@ -1,0 +1,70 @@
+{
+    "package": "Water Doser",
+    "language": "python",
+    "author": "amerkay",
+    "description": "Smart Water Doser for Farmbot: Automatically figures out which plant Farmbot is above and calculates how much water to dose each plant by age and OpenFarm spread and height data. The code is as annotated as could be, so have a look at https://github.com/amerkay/water-doser/",
+    "package_version": "0.2.8",
+    "farmware_manifest_version": "2.0.0",
+    "farmbot_os_version_requirement": ">= 8.0.0",
+    "url": "https://raw.githubusercontent.com/amerkay/water-doser/master/manifest.json",
+    "zip": "https://github.com/amerkay/water-doser/archive/master.zip",
+    "executable": "python",
+    "args": "water-doser-master/src/main.py",
+    "config":
+    {
+        "0":
+        {
+            "name": "plant_search_radius",
+            "label": "Use current location to search for closest plant within this radius. Default 40mm, plus/minus.",
+            "help": [""],
+            "value": "40"
+        },
+        "1":
+        {
+            "name": "water_ml_per_sec",
+            "label": "Water ml per second. Default 100ml/s output.",
+            "help": ["Test yours by turning on the water for 1s using a ON-wait 1000ms-OFF sequence into a measuring cup"],
+            "value": "100"
+        },
+        "2":
+        {
+            "name": "plant_adult_age_weeks",
+            "label": "Assumption: depending on what you planted, at X weeks a plant becomes an adult (i.e. takes the full height and spread). Default 12.",
+            "help": ["TODO, better per plant information source"],
+            "value": "12"
+        },
+        "3":
+        {
+            "name": "to_ml_multiplier",
+            "label": "Water plant in ml, for each 0.01 of plant volume in m^2, modulated for plant age. Default 75 ml/0.01m^2. Lower means less water.",
+            "help": ["See water_dose.py for more information."],
+            "value": "75"
+        },
+        "4":
+        {
+            "name": "weather_lat",
+            "label": "Farmbot's location Latitude from (lat,lon) for weather/rain reports. Using Dark Sky API. None to disable weather. Default None.",
+            "help": [""],
+            "value": "None"
+        },
+        "5":
+        {
+            "name": "weather_lon",
+            "label": "Farmbot's location Longitude from (lat,lon) for weather/rain reports. Using Dark Sky API. None to disable weather. Default None.",
+            "help": [""],
+            "value": "None"
+        },
+        "6":
+        {
+            "name": "debug",
+            "label": "Debug mode (0-> No FW debug msg, 1-> FW debug msg (default), 2-> No move/exec - do save point data, 3-> simulation, log only)",
+            "help": [
+                "0 -> no farmware debug log",
+                "1 -> farmware debug log",
+                "2 -> no move, no execute sequences. Do save point data and farmware debug log",
+                "3 -> simulation mode. No move, no execute sequence, no save meta data. Enable farmware debug log"
+            ],
+            "value": 1
+        }
+    }
+}

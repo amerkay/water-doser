@@ -73,6 +73,7 @@ class WaterDose:
             "Water {} {}ml; for {}ms (precip {}, rain_ml {} on area {})".format(
                 plant["openfarm_slug"], ml, ms, precip, rain_ml, area_plant
             ),
+            'success',
             title="calc_watering_ms",
         )
 

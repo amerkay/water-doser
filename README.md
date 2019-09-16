@@ -13,7 +13,16 @@ Uses SimpleCache, based on built in Pickle to cache API calls.
 ## Installation
 
 
+#### For Farmbot OS 8 ***(new)***
+Go to [My Farmbot -> Farmware](https://my.farm.bot/app/farmware/), then paste the manifest.json path to install:
+```
+https://raw.githubusercontent.com/amerkay/powerloop/master/manifest_v2.json
+```
 
+> Please report bugs using the [issues tab](../../issues/).
+
+
+#### For Farmbot OS 6 and 7
 Go to [My Farmbot -> Farmware](https://my.farm.bot/app/farmware/), then paste the manifest.json path to install:
 ```
 https://raw.githubusercontent.com/amerkay/water-doser/master/manifest.json

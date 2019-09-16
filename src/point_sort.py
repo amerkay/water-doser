@@ -18,17 +18,17 @@ log = Logger.log
 
 class PointSort:
     @staticmethod
-    def sort_points(points, use_tsp_solver=True):
+    def sort_points(points, use_simple_sort=False):
         """ Sort the points """
-        if (use_tsp_solver is True) and len(points) > 0:
+        if not use_simple_sort and len(points) > 0:
             # Get current location
-            currpos = (
-                {"x": 0, "y": 0}
-                if device.get_current_position() is None
-                else device.get_current_position()
-            )
-            log("current position is {}".format(currpos), title="sort_points")
-            return PointSort.sort_points_by_dist(points, currpos)
+            curr_pos = device.get_current_position()
+
+            # this is for local debugging purposes, when running `python main.py`
+            if curr_pos is None:
+                curr_pos = {"x": 0, "y": 0}
+
+            return PointSort.sort_points_by_dist(points, curr_pos)
         else:
             return PointSort.sort_points_basic(points)
 
@@ -52,8 +52,8 @@ class PointSort:
     @staticmethod
     def _distance(p1, p2):
         """ Calculate distance between two points """
-        dx = math.fabs(p1["x"] - p2["x"])
-        dy = math.fabs(p1["y"] - p2["y"])
+        dx = math.fabs(int(float(p1["x"])) - int(float(p2["x"])))
+        dy = math.fabs(int(float(p1["y"])) - int(float(p2["y"])))
         return math.hypot(dx, dy)
 
     @staticmethod
@@ -68,27 +68,23 @@ class PointSort:
         Returns:
             {list of Points} -- The sorted list of Celeryscript Point JSON objects (dicts)
         """
-        if len(points) < 1:
-            return []
+
+        # return sorted(points, key=lambda e: distance(e, target))
 
         totalDist = 0
-        tr = sorted(points, key=lambda elem: (int(elem["x"]), int(elem["y"])))
-        bl = sorted(points, key=lambda elem: (int(elem["x"]), int(-elem["y"])))
-        dist, cur = min(
-            [
-                (PointSort._distance(start_point, p), p)
-                for p in (tr[0], tr[-1], bl[0], bl[-1])
-            ]
-        )
-        path = [cur]
-        for i in range(1, len(points)):
+        # tr = sorted(points, key=lambda elem: (int(elem['x']), int(elem['y'])))
+        # bl = sorted(points, key=lambda elem: (int(elem['x']), int(-elem['y'])))
+        # dist, cur = min([(PointSort._distance(start_point, p), p) for p in (tr[0], tr[-1], bl[0], bl[-1])])
+        cur = start_point
+        path = []
+        for i in range(0, len(points)):
             dists = [(PointSort._distance(cur, p), p) for p in points if p not in path]
             nextDist, cur = min(dists, key=lambda t: t[0])
             totalDist += nextDist
             path.append(cur)
 
         log(
-            "points sorted, total distance is {}".format(totalDist),
+            "{} points sorted, total distance is {}".format(len(path), totalDist),
             title="sort_points_by_dist",
         )
         return path
