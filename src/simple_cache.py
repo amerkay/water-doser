@@ -39,6 +39,8 @@ class SimpleCache:
     def init():
         try:
             # if cache file not modified in 48 hours or empty, don't load it
+            open(SimpleCache.PATH, "w").close()
+
             if (
                 time.time() - os.path.getmtime(SimpleCache.PATH) < 48 * 60 * 60
                 and os.path.getsize(SimpleCache.PATH) > 0
