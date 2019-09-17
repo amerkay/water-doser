@@ -27,7 +27,7 @@ def _get_dir():
 
 
 class SimpleCache:
-    CACHE_FILE = "simple_cache.pickle"
+    CACHE_FILE = "simple_cache_water_doser.pickle"
     PATH = _get_dir() + CACHE_FILE
 
     log("Using PATH: {}".format(PATH), title="SimpleCache")
@@ -39,7 +39,8 @@ class SimpleCache:
     def init():
         try:
             # if cache file not modified in 48 hours or empty, don't load it
-            open(SimpleCache.PATH, "w").close()
+            if not os.path.isfile(SimpleCache.PATH):
+                open(SimpleCache.PATH, "w+").close()
 
             if (
                 time.time() - os.path.getmtime(SimpleCache.PATH) < 48 * 60 * 60
