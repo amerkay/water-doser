@@ -1,9 +1,14 @@
 from farmware_tools import device
+import concurrent.futures
 
 
 class Logger:
     FARMWARE_NAME = "unknown farmware"
     LOGGER_LEVEL = 3
+
+    # Start a concurrent task executor, with pool size 4
+    # Example at doc @ https://docs.python.org/3/library/concurrent.futures.html
+    executor = concurrent.futures.ProcessPoolExecutor(max_workers=1)
 
     @staticmethod
     def set_level(level):
@@ -40,4 +45,15 @@ class Logger:
                 fwname=Logger.FARMWARE_NAME, title=title, msg=message
             )
 
-        device.log(message=log_message, message_type=message_type, channels=channels)
+        Logger.executor.submit(
+            device.log,
+            message=log_message,
+            message_type=message_type,
+            channels=channels,
+        )
+        # device.log(message=log_message, message_type=message_type, channels=channels)
+
+    @staticmethod
+    def shutdown():
+        # shutdown executor
+        Logger.executor.shutdown()

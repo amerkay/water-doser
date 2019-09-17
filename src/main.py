@@ -110,3 +110,4 @@ if __name__ == "__main__":
         raise Exception(e)
 
     log("End", message_type="success", title=FARMWARE_NAME)
+    Logger.shutdown()
