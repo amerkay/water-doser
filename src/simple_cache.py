@@ -27,7 +27,7 @@ def _get_dir():
 
 
 class SimpleCache:
-    CACHE_FILE = "simple_cache_water_doser.pickle"
+    CACHE_FILE = "simple_cache.pickle"
     PATH = _get_dir() + CACHE_FILE
 
     log("Using PATH: {}".format(PATH), title="SimpleCache")
